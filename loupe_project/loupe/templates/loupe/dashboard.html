@@ -1,0 +1,51 @@
+{% extends "site_base.html" %}
+{% load loupe_tags %}
+{% load comments %}
+
+{% block content %}
+    <h2>Your Projects</h2>
+    {% for project in projects %}
+    <div class="project-item">
+        <h4><a href="{% url project_detail project.slug %}">{{ project.title }}</a></h4>
+        {{ project.description }}</p>
+        {% get_corkboards_for project as 'corkboards' %}
+        {% if corkboards %}Corkboards:{% endif %}
+        <ul>
+        {% for cork in corkboards %}
+            {% get_comment_count for cork as comment_count %}
+            <li><a href="{% url corkboard_detail cork.slug %}">{{ cork.title }}</a> {{ comment_count }} <img src="{{ STATIC_URL }}images/comment.png" align="absmiddle" /></li>
+        {% endfor %}
+        </ul>
+    </div>
+    {% endfor %}
+    {% if user.is_authenticated and user.is_staff %}
+    <h2>Add New Project</h2>
+    <form action="" method="POST">{% csrf_token %}
+            {% if form.non_field_errors %}
+        <div class="alert- error">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% for field in form %}
+        {% if field.is_hidden %}
+          {{ field }}
+        {% else %}
+        <div class="clearfix {% if field.errors %}error{% endif %}">
+          <label id="{{ field.name }}">{{field.label}}</label>
+          <div class="input">
+          {{ field }}
+          {% if field.help_text or field.errors %}
+          <span class="help-inline">
+            {{ field.errors }}
+            {{ field.help_text }}
+          </span>
+          {% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <p class="actions">
+            <input type="submit" name="post" class="btn primary" value="Post" />
+      </p>
+    </form>
+    {% endif %}
+{% endblock %}

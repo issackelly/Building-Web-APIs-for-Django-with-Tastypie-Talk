@@ -1,0 +1,77 @@
+{% extends "site_base.html" %}
+{% load comments %}
+
+{% block extranav %}
+    <li><a href="{% url project_detail corkboard.project.slug %}">{{ corkboard.project }}</a><li>
+    <li><a href="#">{{ corkboard }}</a><li>
+{% endblock %}
+
+
+{% block content %}
+    <h2>Corkboard for {{ corkboard.title }}</h2>
+    <p>{{ corkboard.description }}</p>
+    {% for p in images %}
+        <div class="image-thumb">
+        {% get_comment_count for p as comment_count %}
+        <a href="{% url image_detail p.id %}"><img src="{{ p.thumbnail_image.url }}" alt="{{ p.title }}"></a><br />
+        {{ comment_count }} <img src="{{ STATIC_URL }}images/comment.png" align="absmiddle" />
+        {% if user.is_authenticated and user.is_staff %}
+        <form action="{% url image_destroy p.id %}" method="POST">{% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}" />
+            <input class="delete btn" type="submit" value="Delete" />
+        </form>
+        {% endif %}
+        </div>
+    {% endfor %}
+    <div class="clear"></div>
+
+    <div class="comment-block left">
+    <h4>Comments on corkboard {{ corkboard.title }}</h4>
+    {% get_comment_list for corkboard as comment_list %}
+    {% for comment in comment_list %}
+        <div class="comment-node">
+            <div class="meta">{{ comment.user_name }}
+            <span>{{ comment.submit_date|date:"d-M" }}</span></div>
+            <div class="comment-comment">{{ comment.comment }}</div>
+            <div class="clear"></div>
+        </div>
+    {% endfor %}
+
+    <div class="comment_form">
+        <p>To comment on an image select the image above and use the comments form related to it.</p>
+        {% render_comment_form for corkboard %}
+    </div>
+    </div>
+
+    <div class="upload-form">
+    <h4>Upload an image to this corkboard</h4>
+    <form enctype="multipart/form-data" method="POST" action="">
+        {% csrf_token %}
+        {% if form.non_field_errors %}
+        <div class="alert- error">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% for field in form %}
+        {% if field.is_hidden %}
+          {{ field }}
+        {% else %}
+        <div class="clearfix {% if field.errors %}error{% endif %}">
+          <label id="{{ field.name }}">{{field.label}}</label>
+          <div class="input">
+          {{ field }}
+          {% if field.help_text or field.errors %}
+          <span class="help-inline">
+            {{ field.errors }}
+            {{ field.help_text }}
+          </span>
+          {% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <p class="actions"><input type="submit" class="btn primary" value="Upload" /></p>
+    </form>
+    </div>
+
+    <div class="clear"></div>
+{% endblock %}

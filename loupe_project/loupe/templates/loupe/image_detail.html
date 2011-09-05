@@ -1,0 +1,120 @@
+{% extends "site_base.html" %}
+{% load comments %}
+
+{% block extranav %}
+    <li>
+        <a href="{% url project_detail image.corkboard.project.slug %}">{{ image.corkboard.project }}</a>
+    </li>
+    <li>
+        <a href="{% url corkboard_detail image.corkboard.slug %}">{{ image.corkboard }}</a>
+    <li>
+    <li><a href="#">{{ image }}</a></li>
+{% endblock %}
+
+{% block css_extra %}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/imgnotes.css" media="screen" />
+{% endblock %}
+{% block js_extra %}
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.imgnotes-0.2.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.imgareaselect-0.8.js"></script>
+    <script type="text/javascript">
+        // Loop through and add notes from the database.
+        notes = [{% for note in notes %}{"x1":"{{ note.x1 }}","y1":"{{ note.y1 }}","height":"{{ note.height }}","width":"{{ note.width }}","note":"{{ note.user }}: {{ note.note }}"},{% endfor %}];
+
+		$(window).load(function () {
+			$('#idisplay').imgNotes();
+
+			$('#cancelnote').click(function(){
+				$('#idisplay').imgAreaSelect({ hide: true });
+				$('#noteform').hide();
+			});
+
+			$('#addnotelink').click(function(){
+				$('#idisplay').imgAreaSelect({ onSelectChange: showaddnote, x1: 120, y1: 90, x2: 280, y2: 210 });
+				return false;
+			});
+		});
+
+	function showaddnote (img, area) {
+		imgOffset = $(img).offset();
+		form_left  = parseInt(imgOffset.left) + parseInt(area.x1);
+		form_top   = parseInt(imgOffset.top) + parseInt(area.y1) + parseInt(area.height)+5;
+
+		$('#noteform').css({ left: form_left + 'px', top: form_top + 'px'});
+
+		$('#noteform').show();
+
+		$('#noteform').css("z-index", 10000);
+		$('#id_x1').val(area.x1);
+		$('#id_y1').val(area.y1);
+		$('#id_height').val(area.height);
+		$('#id_width').val(area.width);
+
+	}
+	</script>
+{% endblock %}
+
+{% block content %}
+    <h2>{{ image.title }}</h2>
+    <div class="image_display">
+        <div class="image-specs">
+            {% get_comment_count for image as comment_count %}
+            <p>This image has {% ifequal notes_count 0 %}No Notes {% else %}{{ notes_count }} Notes (Hover over the image to see the notes) {% endifequal %} and {{ comment_count }} <img src="{{ STATIC_URL }}images/comment.png" align="absmiddle" />.<br />
+            <a href="#" id='addnotelink' >Attach a note to this image</a>
+        </div>
+        <img id="idisplay" src="{{ image.display.url }}" alt="{{ image.title }}"><br />
+        <img src="{{ STATIC_URL }}images/zoom.png" align="absmiddle" /><a href="{{ image.original_image.url }}">View Full Size Image</a>
+    </div>
+    <p>{{ image.description }}</p>
+
+    <div id="noteform" class="popover well">
+    <form id="NoteAddForm" method="POST" action="">{% csrf_token %}
+    <h3 class="title">Add Note</h3>
+        {% if form.non_field_errors %}
+        <div class="alert- error">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% for field in form %}
+        {% if field.is_hidden %}
+          {{ field }}
+        {% else %}
+        <div class="clearfix {% if field.errors %}error{% endif %}">
+          <label id="{{ field.name }}">{{field.label}}</label>
+          <div class="input">
+          {{ field }}
+          {% if field.help_text or field.errors %}
+          <span class="help-inline">
+            {{ field.errors }}
+            {{ field.help_text }}
+          </span>
+          {% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+    <div class="actions">
+        <input type="submit" class="btn primary" value="Submit" />
+        <input type="button" value="Cancel" id="cancelnote" class="btn danger">
+    </div>
+    </form>
+    </div>
+
+    <div class="comment-block">
+    <h4>Comments</h4>
+    {% get_comment_list for image as comment_list %}
+    {% for comment in comment_list %}
+        <div class="comment-node">
+            <div class="meta">{{ comment.user_name }}
+            <span>{{ comment.submit_date|date:"d-M" }}</span></div>
+            <div class="comment-comment">{{ comment.comment }}</div>
+            <div class="clear"></div>
+        </div>
+    {% endfor %}
+    <hr />
+    <div class="comment_form">
+        {% render_comment_form for image %}
+    </div>
+    </div>
+
+    <div class="clear"></div>
+{% endblock %}

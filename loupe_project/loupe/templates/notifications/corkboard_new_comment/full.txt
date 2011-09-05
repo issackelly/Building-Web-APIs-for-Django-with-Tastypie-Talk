@@ -1,0 +1,3 @@
+{{ user }} has left a new comment on corkboard {{ corkboard }}.
+
+http://{{ current_site }}{{ corkboard_url }}

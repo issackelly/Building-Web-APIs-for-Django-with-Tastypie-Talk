@@ -1,0 +1,30 @@
+.note {
+	display: none;
+	background: url(spacer.gif); 
+	border: 2px solid rgb(255, 255, 255); 
+	overflow: hidden; 
+	position: absolute; 
+	z-index: 0;
+	cursor: text;
+}
+
+.notep {
+	display: none; 
+	background: #eee; 
+	font-size: 8pt; 
+	margin-top: 0px; 
+	padding: 2px;
+	position: absolute;
+	width: 175px;
+	cursor: text;
+} 
+
+#noteform {
+	display: none;
+	position: absolute;
+	width: 250px;
+}
+
+#noteform textarea{
+	width: 100%;
+}

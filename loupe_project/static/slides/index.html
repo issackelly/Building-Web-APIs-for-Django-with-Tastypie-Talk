@@ -1,0 +1,155 @@
+<html>
+<head>
+    <title>Building APIs in Django with Tastypie</title>
+    <meta name="description" content="Slides from Issac's talk on Building Web APIs, with Python. DjangoCon US 2011">
+    <meta name="author" content="Issac Kelly">
+    <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <link rel="stylesheet" href="stylesheets/base.css">
+    <link rel="stylesheet" href="stylesheets/skeleton.css">
+    <link rel="stylesheet" href="stylesheets/layout.css">
+
+    <script type="text/javascript" src="http://use.typekit.com/yxj4jtw.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+</head>
+<body>
+    <nav>
+        <a href="#first"><img src="images/right-double-icon.png" class="flip"></a> <a href="#previous"><img src="images/right-icon.png" class="flip"></a> <span id="count"></span> <a href="#next"><img src="images/right-icon.png"></a> <a href="#last"><img src="images/right-double-icon.png"></a>
+    </nav>
+
+    <div class="container">
+
+        <section class="slide shownslide" id="intro">
+            <h2>Building Web APIs in Django with Tastypie</h2>
+            <h3>Issac Kelly &mdash; DjangoCon US - September 2011</h3>
+        </section>
+
+        <section class="slide hidden" id="about">
+            <h2 data-onnext="reveal" class="hidden">About You</h2>
+            <h4 data-onnext="reveal" class="hidden">You have written a couple of django applications,
+            and are interested in making a REST API</h4>
+
+            <h2 data-onnext="reveal" class="hidden">About Me</h2>
+            <h4 data-onnext="reveal" class="hidden">Primiarly and API consumer, I've written several APIs
+            against Tastypie and have found it to be awesome</h4>
+        </section>
+
+        <section class="slide hidden" id="why-rest">
+            <h1>Why REST?</h1>
+        </section>
+
+        <section class="slide hidden" id="why-tastypie">
+            <h2>Why Tastypie?</h2>
+            <ul>
+                <li data-onnext="reveal" class="hidden"><h4>Makes Sense</h4></li>
+                <li data-onnext="reveal" class="hidden"><h4>Good features and support, fits well into existing ORM thinking</h4></li>
+                <li data-onnext="reveal" class="hidden"><h4>Totally Extensible</h4></li>
+                <li data-onnext="reveal" class="hidden"><h4>Works well with JavaScript<a href="https://github.com/PaulUithol/backbone-tastypie">*</a></h4></li>
+                <li data-onnext="reveal" class="hidden"><h4>Cool stuff is coming out of the community<a href="http://slumber.in">*</a></h4></li>
+            </ul>
+        </section>
+
+        <section class="slide hidden" id="why-not-tastypie">
+            <h2>Why NOT Tastypie?</h2>
+            <ul>
+                <li data-onnext="reveal" class="hidden"><h4>You know better than your users</h4></li>
+                <li data-onnext="reveal" class="hidden"><h4>You're a Masochist</h4></li>
+                <li data-onnext="reveal" class="hidden"><h4>Restish is enough</h4></li>
+            </ul>
+        </section>
+
+        <section class="slide hidden" id="how-do-we-do">
+            <h2>Great, how do we do it?</h2>
+            <!--<pre>
+    class Project(models.Model):
+        """
+        Stores the projects that corkboards belong to.
+        Only administrators should be able to set these up
+        """
+        title = models.CharField()
+        slug = models.SlugField()
+        description = models.TextField()
+        user = models.ForeignKey(User)
+        members = models.ManyToManyField(User, related_name="ProjectMember")
+        created_on = models.DateTimeField(_('Created On'), default=datetime.now, editable=False)
+        updated_on = models.DateTimeField(_('Updated On'), editable=False, null=True, blank=True)
+
+        class Meta:
+            ordering = ['-created_on',]
+
+        def __unicode__(self):
+            return '%s' % (self.title)
+
+        def save(self, *args, **kwargs):
+            self.updated_on = datetime.now()
+            super(Project, self).save()
+            </pre>-->
+            <script src="https://gist.github.com/1189701.js?file=models.py"></script>
+        </section>
+
+        <section class="slide hidden" id="this-is-how-we-do">
+            <h2>Easily</h2>
+            <script src="https://gist.github.com/1189701.js?file=api.py"></script>
+        </section>
+
+        <section class="slide hidden" id="what-have-we-won-1">
+            <h2>Excellent, what else have I won?</h2>
+            <div data-onnext="reveal" class="hidden">
+                <h4>Serialization Methods</h4>
+                <h5>JSON</h5>
+                <h5>Binary plist</h5>
+                <h5>YAML</h5>
+                <h5>XML</h5>
+                <h5>... Extensible</h5>
+            </div>
+        </section>
+
+        <section class="slide hidden" id="what-have-we-won-2">
+            <h2>Excellent, what else have I won?</h2>
+            <div data-onnext="reveal" class="hidden">
+                <h4>Authentication Classes</h4>
+                <h5>NO-OP</h5>
+                <h5>API Key</h5>
+                <h5>HttpBasic Auth and Digest(?)</h5>
+                <h5>... Extensible</h5>
+            </div>
+        </section>
+
+        <section class="slide hidden" id="what-have-we-won-3">
+            <h2>Excellent, what else have I won?</h2>
+            <div data-onnext="reveal" class="hidden">
+                <h4>Authorization Classes</h4>
+                <h5>ReadOnly</h5>
+                <h5>Default Authorized</h5>
+                <h5>Django Authorization!</h5>
+                <h5>... Extensible</h5>
+            </div>
+        </section>
+
+        <section class="slide hidden" id="what-have-we-won-4">
+            <h2>Excellent, what else have I won?</h2>
+            <div data-onnext="reveal" class="hidden">
+                <h4>It's Python, and it's Class Based</h4>
+                <h5>... Extensible</h5>
+            </div>
+        </section>
+
+        <section class="slide hidden" id="blank-1"></section>
+
+        <section class="slide hidden" id="questions">
+            <h2>Questions?</h2>
+            <h4><a href="mailto:issac@kellycreativetech.com">issac@kellycreativetech.com</a> - <a href="http://twitter.com/issackelly">twitter.com/issackelly</a> - <a href="http://github.com/issackelly">github.com/issackelly</a></h4>
+        </section>
+    </div>
+
+    <script type="text/javascript" src="/site_media/static/js/jquery-1.6.2.min.js"></script>
+    <script src="javascripts/modernizr.custom.js"></script>
+    <script src="javascripts/jquery.scrollTo-min.js"></script>
+    <script src="javascripts/jquery.ba-hashchange.min.js"></script>
+    <script>if(Modernizr.touch) { document.write("<script src='javascripts/jquery.touchSwipe-1.2.4.js'>\x3C/script>"); }</script>
+    <script src="javascripts/app.js" type="text/javascript"></script>
+</body>
+</html>

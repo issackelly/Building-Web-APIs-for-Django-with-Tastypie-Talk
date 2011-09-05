@@ -1,0 +1,38 @@
+.note {
+	display: none;
+	background: url(spacer.gif);
+	border: 2px solid #000;
+	overflow: hidden;
+	position: absolute;
+	z-index: 0;
+	cursor: text;
+}
+
+.notep {
+	display: none;
+	font-size:12pt;
+}/*	background: #666;
+	font-size: 8pt;
+    color: #fff;
+	margin-top: 0px;
+	padding: 2px 5px;
+	position: absolute;
+	width: 175px;
+	cursor: text;
+}
+
+/*#noteform {
+	display: none;
+	position: absolute;
+	width: 250px;
+    background: #fff;
+    padding: 5px;
+	border: 1px solid #999;
+	padding: 3px 10px;
+	-moz-border-radius: 4px;
+	-webkit-border-radius: 4px;
+}
+
+#noteform textarea{
+	width: 100%;
+}*/

@@ -1,0 +1,3 @@
+{{ user }} has uploaded a new image to corkboard {{ corkboard }}.
+
+http://{{ current_site }}{{ image_url }}

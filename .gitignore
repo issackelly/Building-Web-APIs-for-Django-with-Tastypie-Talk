@@ -1,0 +1,12 @@
+*.pyc
+*.pyo
+.installed.cfg
+dev,db
+bin
+develop-eggs
+dist
+eggs
+parts
+local_settings.py
+site_media
+*.DS_Store

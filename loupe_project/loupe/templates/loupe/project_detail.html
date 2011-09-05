@@ -1,0 +1,58 @@
+{% extends "site_base.html" %}
+{% load comments %}
+
+{% block extranav %}
+    <li><a href="{% url project_detail project.slug %}">{{ project }}</a></li>
+{% endblock %}
+
+{% block content %}
+    <h2>Project {{ project.title }}</h2>
+    <p>{{ cork.description }}</p>
+
+    <div class="cork-item">
+    <h3>Corkboards for this project</h3>
+    <ul>
+        {% for cork in corkboards %}
+        {% get_comment_count for cork as comment_count %}
+        <li>{% if user.is_authenticated and user.is_staff %}
+        <form action="{% url corkboard_destroy cork.id %}" method="POST">{% csrf_token %}
+            <input type="image" src="{{ STATIC_URL }}images/delete.png" align="right" />
+        </form>
+        {% endif %}<a href="{% url corkboard_detail cork.slug %}">{{ cork.title }}</a> {{ comment_count }} <img src="{{ STATIC_URL }}images/comment.png" align="absmiddle" /></li>
+        {% endfor %}
+    </ul>
+    </div>
+
+    {% if user.is_authenticated %}
+    <h2>Add New Corkboard</h2>
+    <p>A corkboard is a place to group images for review by client or project team.<br />
+    Example: a home page corkboard will store all screenshots of the home page design revisions.</p>
+    <form action="" method="POST">{% csrf_token %}
+            {% if form.non_field_errors %}
+        <div class="alert- error">{{ form.non_field_errors }}</div>
+        {% endif %}
+
+        {% for field in form %}
+        {% if field.is_hidden %}
+          {{ field }}
+        {% else %}
+        <div class="clearfix {% if field.errors %}error{% endif %}">
+          <label id="{{ field.name }}">{{field.label}}</label>
+          <div class="input">
+          {{ field }}
+          {% if field.help_text or field.errors %}
+          <span class="help-inline">
+            {{ field.errors }}
+            {{ field.help_text }}
+          </span>
+          {% endif %}
+          </div>
+        </div>
+        {% endif %}
+        {% endfor %}
+        <p class="actions">
+            <input type="submit" name="post" class="btn primary" value="Create" />
+      </p>
+    </form>
+    {% endif %}
+{% endblock %}

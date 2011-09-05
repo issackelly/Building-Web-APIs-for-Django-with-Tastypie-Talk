@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>{% block page_title %}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{% endblock %}" />
+    <meta name="keywords" content="{% block meta_keywords %}{% endblock %}" />
+    <!--<link rel="stylesheet" href="{{ STATIC_URL }}css/style.css" media="screen" />-->
+    <link rel="stylesheet" type="text/css" href="{{ STATIC_URL }}css/bootstrap-1.1.1.min.css">
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery-1.3.2.min.js"></script>
+    {% block css_extra %}{% endblock %}
+    {% block js_extra %}{% endblock %}
+</head>
+  <body>
+
+    <div class="topbar">
+      <div class="fill">
+        <div class="container">
+          <h3><a href="/">Django Loupe, Rehashed</a></h3>
+          <ul>
+            <li><a href="{% url dashboard %}">Dashboard</a></li>
+            {% block extranav %}{% endblock %}
+          </ul>
+
+          <ul>
+          {% if request.user.is_anonymous %}
+          <li><a href="/accounts/register/">Register</a></li>
+          <li><a href="/accounts/login/">Login</a></li>
+          {% else %}
+          <li><a href="/accounts/logout/">Logout</a></li>
+          {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Main hero unit for a primary marketing message or call to action -->
+      <div class="hero-unit">
+        <p>This site is primiarly for demonstration purposes. Use for real at your own risk.</p>
+      </div>
+
+      <div class="row">
+
+        {% if messages %}
+            {% for message in messages %}
+                <div id="message_{{ forloop.counter }}" class="alert-message {{ message.tags }}" ><a href="#" onclick="$('#message_{{ forloop.counter }}').fadeOut(); return false;"><small>clear</small></a> {{ message }}
+                </div>
+            {% endfor %}
+            </ul>
+        {% endif %}
+
+        {% block body %}{% block content %}{% endblock %}{% endblock %}
+      </div>
+
+      <footer>
+        <p>Prepared for DjangoCon US 2011 by <a href="http://github.com/issackelly">Issac Kelly</a>.</p>
+        <p><a href="http://bitbucket.org/gregnewman/django-loupe/overview/">Django-Loupe</a> for project collaboration by <a href="http://twitter.com/20seven">Greg Newman</a></p>
+      </footer>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>
+
+<body class="{% block body-class %}base{% endblock %}">
+</body>
+</html>

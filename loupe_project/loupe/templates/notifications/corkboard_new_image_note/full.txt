@@ -1,0 +1,4 @@
+{{ user }} has created a new note on image '{{ image }}'.
+
+http://{{ current_site }}{{ image_url }}
+

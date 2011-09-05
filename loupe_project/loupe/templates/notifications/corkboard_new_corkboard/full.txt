@@ -1,0 +1,3 @@
+{{ user }} has created a new corkboard titled '{{ corkboard }}'.
+
+http://{{ current_site }}{{ corkboard_url }}

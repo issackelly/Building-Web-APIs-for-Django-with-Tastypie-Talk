@@ -1,0 +1,39 @@
+{% load comments i18n %}
+<form action="{% comment_form_target %}" id="comment_form" method="post">
+    {% csrf_token %}
+    {% if next %}<input type="hidden" name="next" value="{{ next }}" />{% endif %}
+    {% if form.non_field_errors %}
+    <div class="alert- error">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    {% for field in form %}
+    {% if field.is_hidden %}
+      {{ field }}
+    {% else %}
+    <div class="clearfix {% if field.errors %}error{% endif %}">
+      <label id="{{ field.name }}">{{field.label}}</label>
+      <div class="input">
+      {{ field }}
+      {% if field.help_text or field.errors %}
+      <span class="help-inline">
+        {{ field.errors }}
+        {{ field.help_text }}
+      </span>
+      {% endif %}
+      </div>
+    </div>
+    {% endif %}
+    {% endfor %}
+    <p class="actions">
+        <input type="hidden" name="next" value="{{ request.path }}" />
+        <input type="submit" name="post" class="btn primary" value="{% trans "Post" %}" />
+  </p>
+</form>
+<script type="text/javascript">
+$(document).ready(function(e){
+    $("#comment_form input[name=name]").parent().parent().hide()
+    $("#comment_form input[name=url]").parent().parent().hide()
+    $("#comment_form input[name=email]").parent().parent().hide()
+    $("#comment_form input[name=honeypot]").parent().parent().hide()
+});
+</script>
