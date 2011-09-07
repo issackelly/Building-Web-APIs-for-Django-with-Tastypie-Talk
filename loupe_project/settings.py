@@ -100,6 +100,8 @@ LOUPE_INCREMENT_COUNT = True # Increment the view count on images? True or False
 
 LOGIN_REDIRECT_URL = "/"
 
+ACCOUNT_ACTIVATION_DAYS = 7
+
 try:
     from local_settings import *
 except:
