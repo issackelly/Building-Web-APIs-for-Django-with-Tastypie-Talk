@@ -1,8 +1,11 @@
 from tastypie import fields
 from loupe.models import Project, Corkboard, Image, Note
 from django.contrib.auth.models import User
+from django.db.models import Q
 from base64_fields import Base64FileField
 from tastypie.resources import ModelResource, ALL, ALL_WITH_RELATIONS
+from tastypie.http import HttpCreated
+from tastypie.utils import dict_strip_unicode_keys
 #from django.contrib.comments.models import Comment
 
 from tastypie.authentication import BasicAuthentication
@@ -26,8 +29,16 @@ class ProjectResource(ModelResource):
 
     corkboards = fields.ToManyField("loupe.api.CorkboardResource", "corkboard_set", full=True)
 
+    def post_list(self, request, **kwargs):
+        deserialized = self.deserialize(request, request.raw_post_data, format=request.META.get("CONTENT_TYPE", "application/json"))
+        bundle = self.build_bundle(data=dict_strip_unicode_keys(deserialized))
+        self.is_valid(bundle, request)
+        ## add user into obj_create, this is the only difference between std tastypie implementation
+        updated_bundle = self.obj_create(bundle, request=request, user=request.user)
+        return HttpCreated(location=self.get_resource_uri(updated_bundle))
+
     def get_object_list(self, request, *args, **kwargs):
-        return Project.objects.filter(members=request.user)
+        return Project.objects.filter(Q(members=request.user) | Q(user=request.user))
 
     class Meta:
         queryset = Project.objects.all()
@@ -43,10 +54,18 @@ class ProjectResource(ModelResource):
 
 class CorkboardResource(ModelResource):
 
+    def post_list(self, request, **kwargs):
+        deserialized = self.deserialize(request, request.raw_post_data, format=request.META.get("CONTENT_TYPE", "application/json"))
+        bundle = self.build_bundle(data=dict_strip_unicode_keys(deserialized))
+        self.is_valid(bundle, request)
+        ## add user into obj_create, this is the only difference between std tastypie implementation
+        updated_bundle = self.obj_create(bundle, request=request, user=request.user)
+        return HttpCreated(location=self.get_resource_uri(updated_bundle))
+
     images = fields.ToManyField("loupe.api.ImageResource", "image_set", full=True)
 
     def get_object_list(self, request, *args, **kwargs):
-        return Corkboard.objects.filter(project__members=request.user)
+        return Corkboard.objects.filter(Q(project__members=request.user) | Q(project__user=request.user))
 
     class Meta:
         queryset = Corkboard.objects.all()
@@ -65,7 +84,15 @@ class ImageResource(ModelResource):
     notes = fields.ToManyField("loupe.api.NoteResource", "note_set", full=True)
 
     def get_object_list(self, request, *args, **kwargs):
-        return Image.objects.filter(corkboard__project__members=request.user)
+        return Image.objects.filter(Q(corkboard__project__members=request.user) | Q(corkboard__project__members=request.user))
+
+    def post_list(self, request, **kwargs):
+        deserialized = self.deserialize(request, request.raw_post_data, format=request.META.get("CONTENT_TYPE", "application/json"))
+        bundle = self.build_bundle(data=dict_strip_unicode_keys(deserialized))
+        self.is_valid(bundle, request)
+        ## add user into obj_create, this is the only difference between std tastypie implementation
+        updated_bundle = self.obj_create(bundle, request=request, user=request.user)
+        return HttpCreated(location=self.get_resource_uri(updated_bundle))
 
     class Meta:
         queryset = Image.objects.all()
@@ -82,7 +109,15 @@ class ImageResource(ModelResource):
 class NoteResource(ModelResource):
 
     def get_object_list(self, request, *args, **kwargs):
-        return Note.objects.filter(image__corkboard__project__members=request.user)
+        return Note.objects.filter(Q(image__corkboard__project__members=request.user) | Q(image__corkboard__project__members=request.user))
+
+    def post_list(self, request, **kwargs):
+        deserialized = self.deserialize(request, request.raw_post_data, format=request.META.get("CONTENT_TYPE", "application/json"))
+        bundle = self.build_bundle(data=dict_strip_unicode_keys(deserialized))
+        self.is_valid(bundle, request)
+        ## add user into obj_create, this is the only difference between std tastypie implementation
+        updated_bundle = self.obj_create(bundle, request=request, user=request.user)
+        return HttpCreated(location=self.get_resource_uri(updated_bundle))
 
     class Meta:
         queryset = Note.objects.all()
